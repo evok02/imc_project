@@ -1,5 +1,5 @@
 from typing import List, Union, Optional
-from flask import jsonify
+from flask import jsonify, make_response
 
 from .newspaper import Newspaper
 from .issue import Issue
@@ -22,7 +22,7 @@ class Agency(object):
         #TODO: assert that ID does not exist  yet (or create a new one)
         for newspaper in self.newspapers:
             if newspaper.paper_id == new_paper.paper_id:
-                return jsonify(f"Newspaper with ID {new_paper.paper_id} already exist, try another one")
+                return make_response(f"Newspaper with ID {new_paper.paper_id} already exist, try another one")
         else:
             self.newspapers.append(new_paper)
 

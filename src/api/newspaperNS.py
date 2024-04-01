@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, make_response
 from flask_restx import Namespace, reqparse, Resource, fields
 
 from ..model.agency import Agency
@@ -67,6 +67,8 @@ class NewspaperID(Resource):
     @newspaper_ns.marshal_with(paper_model, envelope='newspaper')
     def get(self, paper_id):
         search_result = Agency.get_instance().get_newspaper(paper_id)
+        if not search_result:
+            return make_response(f"Newspaper with ID {paper_id} was not found")
         return search_result
 
     @newspaper_ns.doc(parser=paper_model, description="Update a new newspaper")
@@ -75,7 +77,7 @@ class NewspaperID(Resource):
     def post(self, paper_id):
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
-            return jsonify(f"Newspaper with ID {paper_id} was not found")
+            return make_response(f"Newspaper with ID {paper_id} was not found")
         targeted_paper.name = newspaper_ns.payload["name"]
         targeted_paper.frequency = newspaper_ns.payload["frequency"]
         targeted_paper.price = newspaper_ns.payload["price"]
@@ -86,7 +88,7 @@ class NewspaperID(Resource):
     def delete(self, paper_id):
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
-            return jsonify(f"Newspaper with ID {paper_id} was not found")
+            return make_response(f"Newspaper with ID {paper_id} was not found")
         Agency.get_instance().remove_newspaper(targeted_paper)
         return jsonify(f"Newspaper with ID {paper_id} was removed")
     
@@ -98,7 +100,7 @@ class NewspaperIssue(Resource):
     def get(self, paper_id):
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
-            return jsonify(f"Newspaper with ID {paper_id} was not found")
+            return make_response(f"Newspaper with ID {paper_id} was not found")
         return targeted_paper.get_issues()
     
         
@@ -112,8 +114,34 @@ class NewspaperIssue(Resource):
                           released = newspaper_ns.payload["released"])
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
-            return jsonify(f"Newspaper with ID {paper_id} was not found")
+            return make_response(f"Newspaper with ID {paper_id} was not found")
         targeted_paper.add_issue(new_issue)
         return new_issue
+    
+@newspaper_ns.route("/<int:paper_id>/issue/<int:issue_id>")
+class IssueID(Resource):
+    @newspaper_ns.doc(description = "Get information of a newspaper issue")
+    @newspaper_ns.marshal_with(issue_model, envelope = "newspaper")
+    def get(self, paper_id, issue_id):
+        targeted_paper = Agency.get_instance().get_newspaper(paper_id)
+        if not targeted_paper:
+            return make_response(f"Newspaper with ID {paper_id} was not found")
+        if not targeted_paper.get_issue(issue_id):
+            return make_response(f"Newspaper issue with {issue_id} was not found")
+        return targeted_paper.get_issue(issue_id)
         
+@newspaper_ns.route("/<int:paper_id>/issue/<int:issue_id>/release")
+class ReleaseIssue(Resource):
+    @newspaper_ns.doc(description = "Release an issue")
+    def post(self, paper_id, issue_id):
+        targeted_paper = Agency.get_instance().get_newspaper(paper_id)
+        if not targeted_paper:
+            return make_response(f"Newspaper with ID {paper_id} was not found")
+        targeted_issue = targeted_paper.get_issue(issue_id)
+        if not targeted_issue:
+            return make_response(f"Newspaper issue with {issue_id} was not found")
+        targeted_paper.release_issue(issue_id)
+        return jsonify(f"Issue was released")
+        
+
         
