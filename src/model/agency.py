@@ -2,6 +2,7 @@ from typing import List, Union, Optional
 from flask import jsonify
 
 from .newspaper import Newspaper
+from .issue import Issue
 
 
 class Agency(object):
