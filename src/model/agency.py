@@ -3,13 +3,16 @@ from flask import jsonify, make_response
 
 from .newspaper import Newspaper
 from .issue import Issue
-
+from .editor import Editor
+from .subscriber import Subscriber
 
 class Agency(object):
     singleton_instance = None
 
     def __init__(self):
         self.newspapers: List[Newspaper] = []
+        self.editors: List[Editor] = []
+        self.subscribers: List[Subscriber]
 
     @staticmethod
     def get_instance():
@@ -37,4 +40,25 @@ class Agency(object):
 
     def remove_newspaper(self, paper: Newspaper):
         self.newspapers.remove(paper)
+
+    def get_editor(self, editor_id):
+        for editor in self.editors:
+            if editor.id == editor_id:
+                return editor
+        return None
+    
+    def add_editor(self, new_editor: Editor):
+        for editor in self.editors:
+            if editor.id ==  new_editor.id:
+                return make_response(f"Editor with ID {new_editor.id} already exist")
+        else:
+            self.editors.append(new_editor)
+
+    def get_subscriebr(self, subscriber_id):
+        for subscriber in self.subscribers:
+            if subscriber.id == subscriber_id:
+                return subscriber
+        return None
+
+    
 

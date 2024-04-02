@@ -142,6 +142,39 @@ class ReleaseIssue(Resource):
             return make_response(f"Newspaper issue with {issue_id} was not found")
         targeted_paper.release_issue(issue_id)
         return jsonify(f"Issue was released")
-        
+    
+@newspaper_ns.route("/newspaper/<int:paper_id>/issue/<int:issue_id>/editor")
+class SetIssueEditor(Resource):
+    @newspaper_ns.doc(description = "Specify an editor for an issue. (Transmit the editor ID as parameter)")
+    def post(self, editor_id, issue_id, paper_id):
+        targeted_paper = Agency.get_instance().get_newspaper(paper_id)
+        if not targeted_paper:
+            return make_response(f"Newspaper with ID {paper_id} was not found")
+        targeted_issue = targeted_paper.get_issue(issue_id)
+        if not targeted_issue:
+            return make_response(f"Newspaper issue with {issue_id} was not found")
+        targeted_editor = Agency.get_editor(editor_id)
+        if not targeted_editor: 
+            return make_response(f"Issue's editor with ID {editor_id} was not found")
+        targeted_issue.set_editor(targeted_editor)
+        return jsonify(f"Editor with ID{editor_id} work on {targeted_issue.name}")
+
+@newspaper_ns.route("/newspaper/<paper_id>/issue/<issue_id>/deliver")
+class SendIssue(Resource):
+    @newspaper_ns.doc(description = "\"Send\" an issue to a subscriber. This means there should be a record of the subscriber receiving")
+    def post(self, paper_id, issue_id, subscriber_id):
+        targeted_paper = Agency.get_instance().get_newspaper(paper_id)
+        if not targeted_paper:
+            return make_response(f"Newspaper with ID {paper_id} was not found")
+        targeted_issue = targeted_paper.get_issue(issue_id)
+        if not targeted_issue:
+            return make_response(f"Newspaper issue with {issue_id} was not found")
+        targeted_subscriber = Agency.get_instance().get_subscriebr(subscriber_id)
+        if not targeted_subscriber:
+            return make_response(f"Newspaper subscriber with {subscriber_id} was not found")
+        targeted_issue.send_issue(targeted_subscriber)
+        return jsonify(f"Issue was sent to a subscriber with ID {subscriber_id}")
+    
+
 
         

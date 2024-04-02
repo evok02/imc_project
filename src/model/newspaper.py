@@ -8,6 +8,8 @@ from flask import jsonify
 
 from typing import List, Union, Optional
 
+from .subscriber import Subscriber
+
 
 class Newspaper(object):
 
@@ -17,6 +19,7 @@ class Newspaper(object):
         self.frequency: int = frequency  # the issue frequency (in days)
         self.price: float = price  # the monthly price
         self.issues: List[Issue] = []
+
 
     def get_issues(self) -> List[Issue]:
         return self.issues
@@ -42,6 +45,7 @@ class Newspaper(object):
                     issue.released = True
                 else: 
                     return jsonify(f"Issue was released {issue.releasedate}")
+                
             
 
 
