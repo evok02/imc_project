@@ -1,9 +1,6 @@
-from .editor import Editor
 from typing import List, Union, Optional
 from flask import jsonify, make_response
 
-from .newspaper import Newspaper
-from .issue import Issue
 from .subscriber import Subscriber
 class Issue(object):
 
@@ -15,7 +12,7 @@ class Issue(object):
         self.editor_id = None
         self.send_to: List[Subscriber] = []
 
-    def set_editor(self, editor: Editor) -> None:
+    def set_editor(self, editor) -> None:
         self.editor_id = editor.id
         editor.work_on_issues.append(self)
 
