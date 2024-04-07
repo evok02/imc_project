@@ -65,6 +65,18 @@ class Agency(object):
     def delete_editor(self, editor:Editor) -> None:
         self.editors.remove(editor)
 
+    def get_subscribers(self):
+        return self.subscribers
+    
+    def get_subscriber(self, subscriebr_id):
+        for subscruber in self.subscribers:
+            if subscruber.id == subscriebr_id:
+                return subscruber
+        return None
+    
+    def add_subscriber(self, subscriber):
+        self.subscribers.append(subscriber)
+
     
 
     

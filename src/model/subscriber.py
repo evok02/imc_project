@@ -8,4 +8,4 @@ class Subscriber(object):
         self.name = name
         self.id = id
         self.subscribed_newspapers = []
-        self.recieved_issued = []
+        self.recieved_issues = []
