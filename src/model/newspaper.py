@@ -31,6 +31,7 @@ class Newspaper(object):
                 return jsonify(f"Issue of this newspaper with ID {new_issue.id} already exist. Try another one")
         else: 
             self.issues.append(new_issue)
+            new_issue.newspaper = self
 
     def get_issue(self, issue_id:int) -> Optional[Issue]:
         for issue in self.issues:
@@ -45,6 +46,12 @@ class Newspaper(object):
                     issue.released = True
                 else: 
                     return jsonify(f"Issue was released {issue.releasedate}")
+                
+    def __str__(self) -> str:
+        return self.name
+    
+    def __repr__(self) -> str:
+        return self.name
                 
 
             

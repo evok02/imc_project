@@ -74,7 +74,7 @@ class NewspaperAPI(Resource):
 @newspaper_ns.route('/<int:paper_id>')
 class NewspaperID(Resource):
 
-    @newspaper_ns.doc(description="Get a new newspaper")
+    @newspaper_ns.doc(description="Get a newspaper")
     @newspaper_ns.marshal_with(paper_model, envelope='newspaper')
     def get(self, paper_id):
         search_result = Agency.get_instance().get_newspaper(paper_id)
@@ -82,7 +82,7 @@ class NewspaperID(Resource):
             return make_response(f"Newspaper with ID {paper_id} was not found")
         return search_result
 
-    @newspaper_ns.doc(parser=paper_model, description="Update a new newspaper")
+    @newspaper_ns.doc(parser=paper_model, description="Update a newspaper")
     @newspaper_ns.expect(paper_model, validate=True)
     @newspaper_ns.marshal_with(paper_model, envelope='newspaper')
     def post(self, paper_id):
@@ -95,7 +95,7 @@ class NewspaperID(Resource):
         
         return targeted_paper
 
-    @newspaper_ns.doc(description="Delete a new newspaper")
+    @newspaper_ns.doc(description="Delete a newspaper")
     def delete(self, paper_id):
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
@@ -176,10 +176,18 @@ class SetIssueEditor(Resource):
         targeted_issue.set_editor(targeted_editor)
         return jsonify(f"Editor with ID{editor_id} work on {targeted_issue.name}")
 
-@newspaper_ns.route("/<paper_id>/issue/<issue_id>/deliver")
+@newspaper_ns.route("/<int:paper_id>/issue/<int:issue_id>/deliver")
 class SendIssue(Resource):
-    @newspaper_ns.doc(description = "\"Send\" an issue to a subscriber. This means there should be a record of the subscriber receiving")
-    def post(self, paper_id, issue_id, subscriber_id):
+    @newspaper_ns.doc(description = "\"Send\" an issue to a subscriber. This means there should be a record of the subscriber receiving",
+                      params = {"subscriber_id":"Specify the ID of the newspaper"})
+    def post(self, paper_id, issue_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument("subscriber_id",
+                            type = int,
+                            help = "ID of the newspaper", 
+                            location = "args")
+        args = parser.parse_args()
+        subscriber_id = args["subscriber_id"]
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
             return make_response(f"Newspaper with ID {paper_id} was not found")

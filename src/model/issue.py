@@ -11,6 +11,7 @@ class Issue(object):
         self.released: bool = released
         self.editor_id = None
         self.send_to: List[Subscriber] = []
+        self.newspaper = None
 
     def set_editor(self, editor) -> None:
         self.editor_id = editor.id
@@ -21,6 +22,7 @@ class Issue(object):
             if subscriber.id == new_subscriber.id:
                 return make_response(f"Issue was alredy sent to subscriber with ID{subscriber.id}")
         self.send_to.append(new_subscriber)
+        new_subscriber.recieved_issues.append(self)
 
 
         

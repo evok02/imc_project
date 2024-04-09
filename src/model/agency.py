@@ -11,8 +11,7 @@ class Agency(object):
     def __init__(self):
         self.newspapers: List[Newspaper] = []
         self.editors: List[Editor] = []
-        self.subscribers: List[Subscriber]
-
+        self.subscribers: List[Subscriber] = []
     @staticmethod
     def get_instance():
         if Agency.singleton_instance is None:
@@ -76,6 +75,9 @@ class Agency(object):
     
     def add_subscriber(self, subscriber):
         self.subscribers.append(subscriber)
+
+    def remove_subscriber(self, subscriber):
+        self.subscribers.remove(subscriber)
 
     
 

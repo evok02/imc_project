@@ -8,7 +8,7 @@ from ..model.editor import Editor
 
 from typing import List, Union, Optional
 
-editor_ns = Namespace("editor", desctiprion = "Editor related operations")
+editor_ns = Namespace("editor", description = "Editor related operations")
 
 issue_model = editor_ns.model("IssueModel", {
     "name": fields.String(required = True,
