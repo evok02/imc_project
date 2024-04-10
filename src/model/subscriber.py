@@ -39,7 +39,10 @@ class Subscriber(object):
                 if issue not in self.recieved_issues:
                     missing_issues.append(issue.name)
                     issue.send_issue(self)
-        return f"Issues {missing_issues} were sent to a subscriber"
+        if len(missing_issues) != 0:
+            return f"Issues {missing_issues} were sent to a subscriber"
+        else:
+            return f"There are no missing issues"
         
 
 
