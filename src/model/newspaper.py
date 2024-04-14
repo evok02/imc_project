@@ -10,6 +10,8 @@ from typing import List, Union, Optional
 
 from .subscriber import Subscriber
 
+import datetime
+
 
 class Newspaper(object):
 
@@ -28,7 +30,7 @@ class Newspaper(object):
     def add_issue(self, new_issue: Issue) -> None:
         for issue in self.issues:
             if issue.id == new_issue.id:
-                return jsonify(f"Issue of this newspaper with ID {new_issue.id} already exist. Try another one")
+                raise ValueError(f"Newspaper with ID {new_issue.id} already exists")
         else: 
             self.issues.append(new_issue)
             new_issue.newspaper = self
@@ -44,6 +46,7 @@ class Newspaper(object):
             if issue.id == issue_id:
                 if issue.released == False:
                     issue.released = True
+                    issue.releasedate = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
                 else: 
                     return jsonify(f"Issue was released {issue.releasedate}")
                 

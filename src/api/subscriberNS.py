@@ -105,7 +105,7 @@ class SubscriberSubscribe(Resource):
         if not targeted_paper:
             return jsonify(f"Newspaper with ID {paper_id} was not found")
         targeted_subscriber.subscribe(targeted_paper)
-        return jsonify(f"Subscriber was subscribed to a newspaper")
+        return jsonify(f"Subscriber was subscribed to a newspaper with ID {paper_id}")
 
 @subscriber_ns.route("/<int:subscriber_id>/stats")
 class SubscriberStats(Resource):
@@ -116,7 +116,7 @@ class SubscriberStats(Resource):
             return jsonify(f"Subscriber with ID {subscriber_id} was not found")
         return targeted_subscriber.create_stats()
     
-@subscriber_ns.route("/subscriber/<int:subscriber_id>/missingissues")
+@subscriber_ns.route("/<int:subscriber_id>/missingissues")
 class SubscriberMissingIssues(Resource):
     @subscriber_ns.doc(description = "Check if there are any undelivered issues of the subscribed newspapers")
     def get(self, subscriber_id):

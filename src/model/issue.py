@@ -15,12 +15,13 @@ class Issue(object):
 
     def set_editor(self, editor) -> None:
         self.editor_id = editor.id
-        editor.work_on_issues.append(self)
+        if self not in editor.work_on_issues:
+            editor.work_on_issues.append(self)
 
-    def send_issue(self, new_subscriber: Subscriber) -> None:
+    def send_issue(self, new_subscriber: Subscriber):
         for subscriber in self.send_to:
             if subscriber.id == new_subscriber.id:
-                return make_response(f"Issue was alredy sent to subscriber with ID{subscriber.id}")
+                return jsonify(f"Issue was alredy sent to subscriber with ID{subscriber.id}")
         self.send_to.append(new_subscriber)
         new_subscriber.recieved_issues.append(self)
 

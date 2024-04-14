@@ -142,7 +142,8 @@ class NewspaperIssue(Resource):
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
             return jsonify(f"Newspaper with ID {paper_id} was not found")
-        return newspaper_ns.marshal_list_with(targeted_paper.get_issues(), issue_get_model)
+        issues = targeted_paper.get_issues()
+        return newspaper_ns.marshal(issues, issue_get_model)
     
         
     @newspaper_ns.doc(parser=issue_post_model, description="Adding new issue")
@@ -162,13 +163,12 @@ class NewspaperIssue(Resource):
 @newspaper_ns.route("/<int:paper_id>/issue/<int:issue_id>")
 class IssueID(Resource):
     @newspaper_ns.doc(description = "Get information of a newspaper issue")
-    @newspaper_ns.marshal_with(issue_get_model, envelope = "newspaper")
     def get(self, paper_id, issue_id):
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
             return jsonify(f"Newspaper with ID {paper_id} was not found")
         if not targeted_paper.get_issue(issue_id):
-            return jsonify(f"Newspaper with ID {issue_id} was not found")
+            return jsonify(f"Issue with ID {issue_id} was not found")
         return newspaper_ns.marshal(targeted_paper.get_issue(issue_id), issue_get_model)
         
 @newspaper_ns.route("/<int:paper_id>/issue/<int:issue_id>/release")
@@ -177,10 +177,10 @@ class ReleaseIssue(Resource):
     def post(self, paper_id, issue_id):
         targeted_paper = Agency.get_instance().get_newspaper(paper_id)
         if not targeted_paper:
-           return jsonify(f"Newspaper with ID {paper_id} was not found")
+           return jsonify(f"Issue with ID {paper_id} was not found")
         targeted_issue = targeted_paper.get_issue(issue_id)
         if not targeted_issue:
-            return jsonify(f"Newspaper with ID {issue_id} was not found")
+            return jsonify(f"Issue with ID {issue_id} was not found")
         targeted_paper.release_issue(issue_id)
         return jsonify(f"Issue was released")
 
@@ -199,12 +199,12 @@ class SetIssueEditor(Resource):
            return jsonify(f"Newspaper with ID {paper_id} was not found")
         targeted_issue = targeted_paper.get_issue(issue_id)
         if not targeted_issue:
-            return jsonify(f"Newspaper with ID {issue_id} was not found")
+            return jsonify(f"Issue with ID {issue_id} was not found")
         targeted_editor = Agency.get_instance().get_editor(editor_id)
         if not targeted_editor: 
-            return jsonify(f"Newspaper with ID {editor_id} was not found")
+            return jsonify(f"Editorwith ID {editor_id} was not found")
         targeted_issue.set_editor(targeted_editor)
-        return jsonify(f"Editor with ID{editor_id} work on {targeted_issue.name}")
+        return jsonify(f"Editor with ID {editor_id} work on {targeted_issue.name}")
 
 @newspaper_ns.route("/<int:paper_id>/issue/<int:issue_id>/deliver")
 class SendIssue(Resource):
@@ -223,12 +223,13 @@ class SendIssue(Resource):
            return jsonify(f"Newspaper with ID {paper_id} was not found")
         targeted_issue = targeted_paper.get_issue(issue_id)
         if not targeted_issue:
-            return jsonify(f"Newspaper with ID {issue_id} was not found")
-        targeted_subscriber = Agency.get_instance().get_subscriebr(subscriber_id)
+            return jsonify(f"Issue with ID {issue_id} was not found")
+        targeted_subscriber = Agency.get_instance().get_subscriber(subscriber_id)
         if not targeted_subscriber:
-            return jsonify(f"Newspaper with ID {subscriber_id} was not found")
-        targeted_issue.send_issue(targeted_subscriber)
-        return jsonify(f"Issue was sent to a subscriber with ID {subscriber_id}")
+            return jsonify(f"Subscriber with ID {subscriber_id} was not found")
+        if targeted_issue.send_issue(targeted_subscriber) == None:
+            return jsonify(f"Issue was sent to a subscriber with ID {subscriber_id}")
+        else: return targeted_issue.send_issue(targeted_subscriber)
     
 
 

@@ -11,7 +11,10 @@ class Subscriber(object):
         self.recieved_issues = []
 
     def subscribe(self, newspaper):
-        self.subscribed_newspapers.append(newspaper)
+        if newspaper not in self.subscribed_newspapers:
+            self.subscribed_newspapers.append(newspaper)
+        else: 
+            return jsonify(f"Subscriber already have the subscription on this newspaper.")
 
     def create_stats(self):
         newspapers = len(self.subscribed_newspapers)
@@ -36,13 +39,13 @@ class Subscriber(object):
         missing_issues = []
         for newspaper in self.subscribed_newspapers:
             for issue in newspaper.issues:
-                if issue not in self.recieved_issues:
+                if issue not in self.recieved_issues and issue.released == True:
                     missing_issues.append(issue.name)
                     issue.send_issue(self)
         if len(missing_issues) != 0:
-            return f"Issues {missing_issues} were sent to a subscriber"
+            return jsonify(f"Issues {missing_issues} were sent to a subscriber")
         else:
-            return f"There are no missing issues"
+            return jsonify(f"There are no missing issues")
         
 
 

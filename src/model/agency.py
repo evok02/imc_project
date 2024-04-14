@@ -23,7 +23,7 @@ class Agency(object):
         #TODO: assert that ID does not exist  yet (or create a new one)
         for newspaper in self.newspapers:
             if newspaper.paper_id == new_paper.paper_id:
-                return make_response(f"Newspaper with ID {new_paper.paper_id} already exist, try another one")
+                raise ValueError(f'A newspaper with ID {new_paper.paper_id} already exists')
         else:
             self.newspapers.append(new_paper)
 
@@ -37,7 +37,9 @@ class Agency(object):
         return self.newspapers
 
     def remove_newspaper(self, paper: Newspaper):
-        self.newspapers.remove(paper)
+        if paper in self.newspapers:
+            self.newspapers.remove(paper)
+                
 
     def get_editors(self):
         return self.editors
@@ -51,15 +53,9 @@ class Agency(object):
     def add_editor(self, new_editor: Editor):
         for editor in self.editors:
             if editor.id ==  new_editor.id:
-                return make_response(f"Editor with ID {new_editor.id} already exist")
+                raise ValueError(f'An editor with ID {new_editor.id} already exists')
         else:
             self.editors.append(new_editor)
-
-    def get_subscriebr(self, subscriber_id):
-        for subscriber in self.subscribers:
-            if subscriber.id == subscriber_id:
-                return subscriber
-        return None
     
     def delete_editor(self, editor:Editor) -> None:
         self.editors.remove(editor)
@@ -73,11 +69,15 @@ class Agency(object):
                 return subscruber
         return None
     
-    def add_subscriber(self, subscriber):
-        self.subscribers.append(subscriber)
-
+    def add_subscriber(self, new_subscriber):
+        for subcriber in self.subscribers:
+            if subcriber.id ==  new_subscriber.id:
+                raise ValueError(f'A subscriber with ID {new_subscriber.id} already exists')
+        else:
+            self.subscribers.append(new_subscriber)
     def remove_subscriber(self, subscriber):
-        self.subscribers.remove(subscriber)
+        if subscriber in self.subscribers:
+            self.subscribers.remove(subscriber)
 
     
 

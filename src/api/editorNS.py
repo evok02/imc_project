@@ -91,7 +91,7 @@ class EditorID(Resource):
         if not targeted_editor:
             return jsonify(f"Editor with ID {editor_id} was not found")
         Agency.get_instance().delete_editor(targeted_editor)
-        return jsonify(f"Ediot with ID {editor_id} was deleted")
+        return jsonify(f"Editor with ID {editor_id} was deleted")
     
 @editor_ns.route("/<int:editor_id>/issues")
 class EditorIssues(Resource):
